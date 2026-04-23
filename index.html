@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Leaderboard | Tournament Stats</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="header-inner">
+      <div class="logo">Tournament<span>Stats</span></div>
+      <nav class="header-nav">
+        <a href="index.html" class="nav-link active">Leaderboard</a>
+        <a href="admin.html" class="nav-link">Admin</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <h1 class="page-title">Leaderboard</h1>
+    <p class="page-subtitle">Tournament rankings aggregated by eliminations</p>
+
+    <!-- Filters -->
+    <div class="filters-bar fade-in">
+      <div class="filter-group">
+        <label class="filter-label">Tournament</label>
+        <select id="filterTournament"><option value="">All Tournaments</option></select>
+      </div>
+      <div class="filter-group">
+        <label class="filter-label">Phase</label>
+        <select id="filterPhase"><option value="">All Phases</option></select>
+      </div>
+      <div class="filter-group">
+        <label class="filter-label">Day</label>
+        <select id="filterDay"><option value="">All Days</option></select>
+      </div>
+    </div>
+
+    <!-- Stats Summary -->
+    <div class="stats-row" id="statsRow"></div>
+
+    <!-- Tabs -->
+    <div class="tabs">
+      <button class="tab-btn active" id="tabTeams">Teams</button>
+      <button class="tab-btn" id="tabPlayers">Players</button>
+    </div>
+
+    <!-- Table -->
+    <div id="tableContainer">
+      <div class="loading-spinner"><div class="spinner"></div></div>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    Tournament Stats Platform
+  </footer>
+
+  <!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+
+  <script src="js/firebase-config.js"></script>
+  <script src="js/data.js"></script>
+  <script src="js/public.js"></script>
+</body>
+</html>

@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin | Tournament Stats</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="header-inner">
+      <div class="logo">Tournament<span>Stats</span></div>
+      <nav class="header-nav">
+        <a href="index.html" class="nav-link">Leaderboard</a>
+        <a href="admin.html" class="nav-link active">Admin</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- LOGIN SECTION -->
+  <section id="loginSection">
+    <div class="container login-container">
+      <div class="card fade-in">
+        <div class="card-header">
+          <h2 class="card-title">Admin Login</h2>
+        </div>
+        <form id="loginForm">
+          <div class="form-group">
+            <label for="loginEmail">Email</label>
+            <input type="email" id="loginEmail" required autocomplete="email">
+          </div>
+          <div class="form-group">
+            <label for="loginPassword">Password</label>
+            <input type="password" id="loginPassword" required autocomplete="current-password">
+          </div>
+          <button type="submit" class="btn btn-primary" style="width:100%">Sign In</button>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- ADMIN PANEL -->
+  <section id="adminPanel" class="hidden">
+    <div class="container">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:2rem">
+        <div>
+          <h1 class="page-title">Admin Panel</h1>
+          <p class="page-subtitle">Manage tournaments, phases, days, and upload match data</p>
+        </div>
+        <div style="display:flex;align-items:center;gap:1rem">
+          <span style="color:var(--text-secondary);font-size:0.85rem" id="userEmail"></span>
+          <button class="btn btn-secondary btn-sm" id="logoutBtn">Sign Out</button>
+        </div>
+      </div>
+
+      <!-- Tournament / Phase / Day Management -->
+      <div class="card fade-in" style="margin-bottom:1.5rem">
+        <div class="card-header"><h3 class="card-title">Structure Management</h3></div>
+
+        <!-- Tournament -->
+        <div class="form-group">
+          <label>Tournament</label>
+          <div style="display:flex;gap:0.5rem">
+            <select id="tournamentSelect" style="flex:2"><option value="">-- Select Tournament --</option></select>
+            <input type="text" id="newTournamentName" placeholder="New tournament name" style="flex:2">
+            <button class="btn btn-primary btn-sm" id="btnCreateTournament">Create</button>
+            <button class="btn btn-danger btn-sm" id="btnDeleteTournament">Delete</button>
+          </div>
+        </div>
+
+        <!-- Phase -->
+        <div class="form-group">
+          <label>Phase</label>
+          <div style="display:flex;gap:0.5rem">
+            <select id="phaseSelect" style="flex:2"><option value="">-- Select Phase --</option></select>
+            <input type="text" id="newPhaseName" placeholder="New phase name" style="flex:2">
+            <button class="btn btn-primary btn-sm" id="btnCreatePhase">Create</button>
+            <button class="btn btn-danger btn-sm" id="btnDeletePhase">Delete</button>
+          </div>
+        </div>
+
+        <!-- Day -->
+        <div class="form-group">
+          <label>Day</label>
+          <div style="display:flex;gap:0.5rem">
+            <select id="daySelect" style="flex:2"><option value="">-- Select Day --</option></select>
+            <input type="text" id="newDayName" placeholder="New day name" style="flex:2">
+            <button class="btn btn-primary btn-sm" id="btnCreateDay">Create</button>
+            <button class="btn btn-danger btn-sm" id="btnDeleteDay">Delete</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- File Upload -->
+      <div class="card fade-in" style="margin-bottom:1.5rem">
+        <div class="card-header"><h3 class="card-title">Upload Match Data</h3></div>
+        <p style="color:var(--text-secondary);font-size:0.85rem;margin-bottom:1rem">Select tournament, phase, and day above, then upload your CSV files for a single match.</p>
+        <div class="admin-grid">
+          <div>
+            <label class="filter-label" style="margin-bottom:0.5rem;display:block">Teams CSV</label>
+            <div class="upload-zone" id="teamUploadZone">
+              <div class="upload-icon">&#8679;</div>
+              <p>Click or drag team CSV file here</p>
+              <div id="teamFileName" style="color:var(--accent);margin-top:0.5rem;font-size:0.85rem"></div>
+            </div>
+            <input type="file" accept=".csv" class="file-input" id="teamFile">
+          </div>
+          <div>
+            <label class="filter-label" style="margin-bottom:0.5rem;display:block">Players CSV</label>
+            <div class="upload-zone" id="playerUploadZone">
+              <div class="upload-icon">&#8679;</div>
+              <p>Click or drag player CSV file here</p>
+              <div id="playerFileName" style="color:var(--accent);margin-top:0.5rem;font-size:0.85rem"></div>
+            </div>
+            <input type="file" accept=".csv" class="file-input" id="playerFile">
+          </div>
+        </div>
+        <button class="btn btn-primary" id="btnUploadMatch" style="margin-top:1rem">Upload Match</button>
+      </div>
+
+      <!-- Matches List -->
+      <div class="card fade-in">
+        <div class="card-header"><h3 class="card-title">Uploaded Matches</h3></div>
+        <div id="matchesList">
+          <div class="loading-spinner"><div class="spinner"></div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="site-footer">
+    Tournament Stats Platform
+  </footer>
+
+  <!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+
+  <script src="js/firebase-config.js"></script>
+  <script src="js/csv-parser.js"></script>
+  <script src="js/data.js"></script>
+  <script src="js/admin.js"></script>
+</body>
+</html>
