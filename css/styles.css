@@ -1,5 +1,5 @@
 /* ===== FONTS ===== */
-@import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Inter:wght@300;400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700;800&display=swap');
 
 /* ===== RESET ===== */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -102,7 +102,7 @@ a:hover { color: var(--yellow-hi); }
 }
 
 .logo {
-  font-family: 'Barlow Condensed', sans-serif;
+  font-family: 'Space Grotesk', sans-serif;
   font-size: 1.65rem;
   font-weight: 900;
   letter-spacing: 0.04em;
@@ -157,7 +157,7 @@ a:hover { color: var(--yellow-hi); }
 }
 
 .hero-title {
-  font-family: 'Barlow Condensed', sans-serif;
+  font-family: 'Space Grotesk', sans-serif;
   font-size: clamp(2.8rem, 8vw, 5.5rem);
   font-weight: 900;
   letter-spacing: 0.06em;
@@ -185,7 +185,7 @@ a:hover { color: var(--yellow-hi); }
 }
 
 .page-title {
-  font-family: 'Barlow Condensed', sans-serif;
+  font-family: 'Space Grotesk', sans-serif;
   font-size: 1.8rem;
   font-weight: 800;
   letter-spacing: 0.04em;
@@ -245,7 +245,7 @@ a:hover { color: var(--yellow-hi); }
   display: flex;
   align-items: center;
   justify-content: center;
-  font-family: 'Barlow Condensed', sans-serif;
+  font-family: 'Space Grotesk', sans-serif;
   font-size: 1.6rem;
   font-weight: 900;
   color: var(--yellow);
@@ -259,7 +259,7 @@ a:hover { color: var(--yellow-hi); }
 
 .tournament-card-info { flex: 1; min-width: 0; }
 .tournament-card-name {
-  font-family: 'Barlow Condensed', sans-serif;
+  font-family: 'Space Grotesk', sans-serif;
   font-size: 1.25rem;
   font-weight: 800;
   text-transform: uppercase;
@@ -310,7 +310,7 @@ a:hover { color: var(--yellow-hi); }
   border: 1px solid var(--border-hi);
 }
 .tournament-info-name {
-  font-family: 'Barlow Condensed', sans-serif;
+  font-family: 'Space Grotesk', sans-serif;
   font-size: 1.5rem;
   font-weight: 800;
   text-transform: uppercase;
@@ -333,7 +333,7 @@ a:hover { color: var(--yellow-hi); }
   border-bottom: 1px solid var(--border);
 }
 .card-title {
-  font-family: 'Barlow Condensed', sans-serif;
+  font-family: 'Space Grotesk', sans-serif;
   font-size: 1rem;
   font-weight: 800;
   text-transform: uppercase;
@@ -494,7 +494,7 @@ textarea { resize: vertical; min-height: 80px; }
   color: var(--text-2);
   font-size: 0.8rem;
   font-weight: 700;
-  font-family: 'Barlow Condensed', sans-serif;
+  font-family: 'Space Grotesk', sans-serif;
   text-transform: uppercase;
   letter-spacing: 0.08em;
   cursor: pointer;
@@ -552,7 +552,7 @@ textarea { resize: vertical; min-height: 80px; }
 .data-table tbody tr:hover td { color: var(--text-1); }
 
 .rank-cell {
-  font-family: 'Barlow Condensed', sans-serif;
+  font-family: 'Space Grotesk', sans-serif;
   font-weight: 900;
   font-size: 1.05rem;
   min-width: 48px;
@@ -570,7 +570,7 @@ textarea { resize: vertical; min-height: 80px; }
 .stat-highlight {
   font-weight: 800;
   color: var(--yellow) !important;
-  font-family: 'Barlow Condensed', sans-serif;
+  font-family: 'Space Grotesk', sans-serif;
   font-size: 1rem;
 }
 
@@ -601,7 +601,7 @@ textarea { resize: vertical; min-height: 80px; }
 }
 .stat-card:hover::before { transform: scaleX(1); }
 .stat-value {
-  font-family: 'Barlow Condensed', sans-serif;
+  font-family: 'Space Grotesk', sans-serif;
   font-size: 2.2rem;
   font-weight: 900;
   color: var(--yellow);
@@ -752,7 +752,7 @@ textarea { resize: vertical; min-height: 80px; }
   border-bottom: 1px solid var(--border);
 }
 .admin-topbar-title {
-  font-family: 'Barlow Condensed', sans-serif;
+  font-family: 'Space Grotesk', sans-serif;
   font-size: 1.6rem;
   font-weight: 900;
   text-transform: uppercase;
@@ -787,7 +787,7 @@ textarea { resize: vertical; min-height: 80px; }
   line-height: 1;
 }
 .dash-card-value {
-  font-family: 'Barlow Condensed', sans-serif;
+  font-family: 'Space Grotesk', sans-serif;
   font-size: 2.4rem;
   font-weight: 900;
   color: var(--yellow);
@@ -894,7 +894,7 @@ textarea { resize: vertical; min-height: 80px; }
   color: var(--text-3);
 }
 .empty-state h3 {
-  font-family: 'Barlow Condensed', sans-serif;
+  font-family: 'Space Grotesk', sans-serif;
   font-size: 1.2rem;
   font-weight: 800;
   text-transform: uppercase;
@@ -923,7 +923,7 @@ textarea { resize: vertical; min-height: 80px; }
   max-width: 420px;
 }
 .login-logo {
-  font-family: 'Barlow Condensed', sans-serif;
+  font-family: 'Space Grotesk', sans-serif;
   font-size: 2.2rem;
   font-weight: 900;
   letter-spacing: 0.06em;
@@ -963,7 +963,7 @@ textarea { resize: vertical; min-height: 80px; }
   margin-bottom: 0.6rem;
 }
 .analytics-card-value {
-  font-family: 'Barlow Condensed', sans-serif;
+  font-family: 'Space Grotesk', sans-serif;
   font-size: 2.5rem;
   font-weight: 900;
   color: var(--yellow);
@@ -1094,7 +1094,7 @@ textarea { resize: vertical; min-height: 80px; }
   justify-content: space-between;
 }
 .footer-brand {
-  font-family: 'Barlow Condensed', sans-serif;
+  font-family: 'Space Grotesk', sans-serif;
   font-weight: 800;
   font-size: 0.9rem;
   color: var(--text-3);
@@ -1112,7 +1112,7 @@ textarea { resize: vertical; min-height: 80px; }
 
 /* ===== SECTION TITLE ===== */
 .section-title {
-  font-family: 'Barlow Condensed', sans-serif;
+  font-family: 'Space Grotesk', sans-serif;
   font-size: 0.8rem;
   font-weight: 800;
   text-transform: uppercase;
@@ -1161,4 +1161,74 @@ textarea { resize: vertical; min-height: 80px; }
   .dash-grid { grid-template-columns: 1fr; }
   .analytics-grid { grid-template-columns: 1fr; }
   .admin-grid { grid-template-columns: 1fr; }
+}
+
+/* ===== STATS SUMMARY BAR ===== */
+.stats-summary-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  margin-bottom: 1.5rem;
+  background: var(--bg-2);
+}
+.stats-summary-item {
+  flex: 1;
+  min-width: 140px;
+  padding: 1rem 1.25rem;
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+.stats-summary-item:last-child { border-right: none; }
+.stats-summary-label {
+  font-size: 0.6rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text-3);
+}
+.stats-summary-value {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 1.55rem;
+  font-weight: 700;
+  color: var(--yellow);
+  line-height: 1;
+}
+.stats-summary-sub {
+  font-size: 0.65rem;
+  color: var(--text-3);
+}
+
+/* ===== LOGO FAVICON ===== */
+.logo-wrap {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+}
+.logo-favicon {
+  width: 28px;
+  height: 28px;
+  flex-shrink: 0;
+}
+
+/* ===== FONT WEIGHT FIX (Space Grotesk max 700) ===== */
+.hero-title { font-weight: 700; }
+.page-title { font-weight: 700; }
+.tournament-card-name { font-weight: 700; }
+.admin-topbar-title { font-weight: 700; }
+.dash-card-value { font-weight: 700; }
+.analytics-card-value { font-weight: 700; }
+.login-logo { font-weight: 700; }
+.footer-brand { font-weight: 700; }
+.card-title { font-weight: 700; }
+.tournament-info-name { font-weight: 700; }
+
+@media (max-width: 640px) {
+  .stats-summary-bar { flex-direction: column; }
+  .stats-summary-item { border-right: none; border-bottom: 1px solid var(--border); }
+  .stats-summary-item:last-child { border-bottom: none; }
 }

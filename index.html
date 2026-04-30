@@ -12,7 +12,10 @@
 
   <header class="site-header">
     <div class="header-inner">
-      <div class="logo">FF<span>MENA</span></div>
+      <div class="logo-wrap">
+        <img src="favicon.svg" alt="" class="logo-favicon">
+        <div class="logo">FF<span>MENA</span></div>
+      </div>
       <nav class="header-nav">
         <a href="index.html" class="nav-link active">Tournaments</a>
       </nav>
@@ -56,9 +59,12 @@
       </div>
 
       <div class="tabs">
-        <button class="tab-btn active" id="tabTeams">&#127942; Teams</button>
-        <button class="tab-btn" id="tabPlayers">&#128100; Players</button>
+        <button class="tab-btn active" id="tabTeams">Teams</button>
+        <button class="tab-btn" id="tabPlayers">Players</button>
       </div>
+
+      <!-- Stats Summary Bar (populated by public.js) -->
+      <div id="statsBar" class="stats-summary-bar" style="display:none"></div>
 
       <div id="tableContainer">
         <div class="loading-spinner"><div class="spinner"></div></div>

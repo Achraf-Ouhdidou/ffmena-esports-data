@@ -31,6 +31,7 @@ document.addEventListener('DOMContentLoaded', () => {
     selectedTournament = null;
     selPhase.innerHTML = '<option value="">All Phases</option>';
     selDay.innerHTML   = '<option value="">All Days</option>';
+    hideStatsBar();
   });
 
   async function init() {
@@ -116,18 +117,69 @@ document.addEventListener('DOMContentLoaded', () => {
     try {
       const matches = await DataService.getMatches(filters);
       if (!matches.length) {
+        hideStatsBar();
         tableContainer.innerHTML = '<div class="empty-state"><h3>No Data</h3><p>No matches found for the selected filters.</p></div>';
         return;
       }
       if (currentTab === 'teams') {
-        renderTeams(DataService.aggregateTeams(matches));
+        const teams = DataService.aggregateTeams(matches);
+        renderStatsBar(teams, matches, 'teams');
+        renderTeams(teams);
       } else {
-        renderPlayers(DataService.aggregatePlayers(matches));
+        const players = DataService.aggregatePlayers(matches);
+        renderStatsBar(players, matches, 'players');
+        renderPlayers(players);
       }
     } catch (e) {
       console.error(e);
+      hideStatsBar();
       tableContainer.innerHTML = `<div class="empty-state"><h3>Error</h3><p>${escapeHtml(e.message)}</p></div>`;
     }
+  }
+
+  function hideStatsBar() {
+    const bar = document.getElementById('statsBar');
+    if (bar) bar.style.display = 'none';
+  }
+
+  function renderStatsBar(rows, matches, type) {
+    const bar = document.getElementById('statsBar');
+    if (!bar) return;
+
+    const totalKills  = rows.reduce((s, r) => s + (r.kills  || 0), 0);
+    const totalDamage = rows.reduce((s, r) => s + (r.damage || 0), 0);
+
+    let items;
+    if (type === 'teams') {
+      const totalScore  = rows.reduce((s, r) => s + (r.totalScore  || 0), 0);
+      const totalBooyah = rows.reduce((s, r) => s + (r.booyah      || 0), 0);
+      items = [
+        { label: 'Matches',       value: matches.length },
+        { label: 'Teams',         value: rows.length },
+        { label: 'Total Points',  value: totalScore.toLocaleString() },
+        { label: 'Eliminations',  value: totalKills.toLocaleString() },
+        { label: 'Total Damage',  value: totalDamage.toLocaleString() },
+        { label: 'Booyah Count',  value: totalBooyah }
+      ];
+    } else {
+      const totalAssists   = rows.reduce((s, r) => s + (r.assist    || 0), 0);
+      const totalHeadshots = rows.reduce((s, r) => s + (r.headshots || 0), 0);
+      items = [
+        { label: 'Matches',      value: matches.length },
+        { label: 'Players',      value: rows.length },
+        { label: 'Eliminations', value: totalKills.toLocaleString() },
+        { label: 'Total Damage', value: totalDamage.toLocaleString() },
+        { label: 'Assists',      value: totalAssists.toLocaleString() },
+        { label: 'Headshots',    value: totalHeadshots.toLocaleString() }
+      ];
+    }
+
+    bar.style.display = 'flex';
+    bar.innerHTML = items.map(item => `
+      <div class="stats-summary-item">
+        <span class="stats-summary-label">${item.label}</span>
+        <span class="stats-summary-value">${item.value}</span>
+      </div>`).join('');
   }
 
   function renderTeams(teams) {
@@ -148,7 +200,7 @@ document.addEventListener('DOMContentLoaded', () => {
     tableContainer.innerHTML = buildTable(cols, teams, (row, i) => {
       const rc = i < 3 ? `rank-${i + 1}` : '';
       return `
-        <td class="rank-cell ${rc}">${i < 3 ? ['&#127942;','&#127944;','&#129353;'][i] : i + 1}</td>
+        <td class="rank-cell ${rc}">${i + 1}</td>
         <td class="team-name">${escapeHtml(row.teamName)}</td>
         <td class="stat-highlight">${row.totalScore.toLocaleString()}</td>
         <td>${(row.survivalScore || 0).toLocaleString()}</td>
@@ -179,7 +231,7 @@ document.addEventListener('DOMContentLoaded', () => {
     tableContainer.innerHTML = buildTable(cols, players, (row, i) => {
       const rc = i < 3 ? `rank-${i + 1}` : '';
       return `
-        <td class="rank-cell ${rc}">${i < 3 ? ['&#127942;','&#127944;','&#129353;'][i] : i + 1}</td>
+        <td class="rank-cell ${rc}">${i + 1}</td>
         <td class="player-name">${escapeHtml(row.playerName)}</td>
         <td>${escapeHtml(row.teamName)}</td>
         <td class="stat-highlight">${row.kills.toLocaleString()}</td>
