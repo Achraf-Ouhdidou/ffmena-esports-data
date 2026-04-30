@@ -4,6 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>FFMENA Esports | Tournament Stats</title>
+  <meta name="description" content="FFMENA Esports official tournament statistics and leaderboards.">
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
   <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
@@ -17,12 +19,12 @@
     </div>
   </header>
 
-  <!-- TOURNAMENT SELECTION VIEW (First Layer) -->
+  <!-- TOURNAMENT SELECTION VIEW -->
   <section id="tournamentSelectView">
     <div class="hero-section">
       <div class="hero-content">
         <h1 class="hero-title">FFMENA <span class="accent">ESPORTS</span></h1>
-        <p class="hero-subtitle">Select a tournament to view rankings</p>
+        <p class="hero-subtitle">Official Tournament Statistics &amp; Rankings</p>
       </div>
     </div>
     <div class="container">
@@ -32,18 +34,16 @@
     </div>
   </section>
 
-  <!-- LEADERBOARD VIEW (Second Layer) -->
+  <!-- LEADERBOARD VIEW -->
   <section id="leaderboardView" class="hidden">
     <div class="container">
-      <!-- Back button + Tournament header -->
       <div class="leaderboard-header">
-        <button class="btn btn-back" id="btnBackToTournaments">
-          <span class="back-arrow">&larr;</span> All Tournaments
+        <button class="btn-back" id="btnBackToTournaments">
+          &#8592; All Tournaments
         </button>
         <div class="tournament-info" id="tournamentInfo"></div>
       </div>
 
-      <!-- Filters -->
       <div class="filters-bar fade-in">
         <div class="filter-group">
           <label class="filter-label">Phase</label>
@@ -55,13 +55,11 @@
         </div>
       </div>
 
-      <!-- Tabs -->
       <div class="tabs">
-        <button class="tab-btn active" id="tabTeams">Teams</button>
-        <button class="tab-btn" id="tabPlayers">Players</button>
+        <button class="tab-btn active" id="tabTeams">&#127942; Teams</button>
+        <button class="tab-btn" id="tabPlayers">&#128100; Players</button>
       </div>
 
-      <!-- Table -->
       <div id="tableContainer">
         <div class="loading-spinner"><div class="spinner"></div></div>
       </div>
@@ -71,16 +69,15 @@
   <footer class="site-footer">
     <div class="footer-inner">
       <span class="footer-brand">FFMENA Esports</span>
-      <span class="footer-copy">&copy; 2026 All Rights Reserved</span>
+      <span class="footer-copy">&copy; 2026 All rights reserved</span>
     </div>
   </footer>
 
-  <!-- Firebase SDKs -->
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
-
   <script src="js/firebase-config.js"></script>
+  <script src="js/analytics.js"></script>
   <script src="js/data.js"></script>
   <script src="js/public.js"></script>
 </body>
