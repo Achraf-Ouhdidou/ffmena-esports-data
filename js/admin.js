@@ -186,7 +186,7 @@ document.addEventListener('DOMContentLoaded', () => {
         </div>
         <div style="display:flex;gap:0.5rem;flex-shrink:0">
           <button class="btn btn-ghost btn-sm" onclick="adminManageTournament('${t.id}','${escapeAttr(t.name)}')">Manage</button>
-          <button class="btn btn-ghost btn-sm" onclick="adminUploadLogoFor('${t.id}')">&#128247;</button>
+          <button class="btn btn-ghost btn-sm" onclick="adminUploadLogoFor('${t.id}')" title="Update logo">Logo</button>
           <button class="btn btn-danger btn-sm" onclick="adminDeleteTournament('${t.id}','${escapeAttr(t.name)}')">Delete</button>
         </div>
       </div>`).join('');
@@ -465,7 +465,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     btnUploadMatch.disabled = false;
     btnUploadMatch.textContent = '⬇ Upload Match';
-    btnUploadMatch.innerHTML = '&#128229; Upload Match';
+    btnUploadMatch.textContent = 'Upload Match';
   });
 
   // ─── MATCH HISTORY ───────────────────────────────
