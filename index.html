@@ -3,6 +3,93 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FFMENA Esports | Tournament Stats</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="header-inner">
+      <div class="logo">FF<span>MENA</span></div>
+      <nav class="header-nav">
+        <a href="index.html" class="nav-link active">Tournaments</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- TOURNAMENT SELECTION VIEW (First Layer) -->
+  <section id="tournamentSelectView">
+    <div class="hero-section">
+      <div class="hero-content">
+        <h1 class="hero-title">FFMENA <span class="accent">ESPORTS</span></h1>
+        <p class="hero-subtitle">Select a tournament to view rankings</p>
+      </div>
+    </div>
+    <div class="container">
+      <div class="tournament-grid" id="tournamentGrid">
+        <div class="loading-spinner"><div class="spinner"></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- LEADERBOARD VIEW (Second Layer) -->
+  <section id="leaderboardView" class="hidden">
+    <div class="container">
+      <!-- Back button + Tournament header -->
+      <div class="leaderboard-header">
+        <button class="btn btn-back" id="btnBackToTournaments">
+          <span class="back-arrow">&larr;</span> All Tournaments
+        </button>
+        <div class="tournament-info" id="tournamentInfo"></div>
+      </div>
+
+      <!-- Filters -->
+      <div class="filters-bar fade-in">
+        <div class="filter-group">
+          <label class="filter-label">Phase</label>
+          <select id="filterPhase"><option value="">All Phases</option></select>
+        </div>
+        <div class="filter-group">
+          <label class="filter-label">Day</label>
+          <select id="filterDay"><option value="">All Days</option></select>
+        </div>
+      </div>
+
+      <!-- Tabs -->
+      <div class="tabs">
+        <button class="tab-btn active" id="tabTeams">Teams</button>
+        <button class="tab-btn" id="tabPlayers">Players</button>
+      </div>
+
+      <!-- Table -->
+      <div id="tableContainer">
+        <div class="loading-spinner"><div class="spinner"></div></div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <span class="footer-brand">FFMENA Esports</span>
+      <span class="footer-copy">&copy; 2026 All Rights Reserved</span>
+    </div>
+  </footer>
+
+  <!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+
+  <script src="js/firebase-config.js"></script>
+  <script src="js/data.js"></script>
+  <script src="js/public.js"></script>
+</body>
+</html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Leaderboard | FFMENA Esports</title>
   <link rel="stylesheet" href="css/styles.css">
 </head>
