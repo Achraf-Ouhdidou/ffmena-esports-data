@@ -4,11 +4,11 @@
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 :root {
-  --bg-primary: #050810;
-  --bg-secondary: #0c1220;
-  --bg-card: #111a2e;
-  --bg-card-hover: #162040;
-  --bg-input: #0a1020;
+  --bg-primary: #000000;
+  --bg-secondary: #0a0f1a;
+  --bg-card: #0f1623;
+  --bg-card-hover: #141d30;
+  --bg-input: #080d16;
   --border: #1e2a4a;
   --border-bright: #2d3f6a;
   --accent: #00d4ff;
