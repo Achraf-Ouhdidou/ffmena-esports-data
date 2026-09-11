@@ -2,86 +2,75 @@
 const DataService = {
   // ---- Tournaments ----
   async getTournaments() {
-    const snap = await db.ref('tournaments').once('value');
-    const data = snap.val() || {};
-    return Object.entries(data).map(([id, v]) => ({ id, ...v }));
+    return ApiClient.request('/public/tournaments');
   },
 
   async createTournament(name, logoBase64) {
-    const ref = db.ref('tournaments').push();
-    const payload = { name, createdAt: Date.now() };
-    if (logoBase64) payload.logo = logoBase64;
-    await ref.set(payload);
-    return ref.key;
+    const tournament = await ApiClient.request('/admin/tournaments', {
+      method: 'POST',
+      body: { name, logo: logoBase64 || null }
+    });
+    return tournament.id;
   },
 
   async updateTournamentLogo(id, logoBase64) {
-    await db.ref(`tournaments/${id}/logo`).set(logoBase64);
+    await ApiClient.request(`/admin/tournaments/${encodeURIComponent(id)}/logo`, {
+      method: 'PUT',
+      body: { logo: logoBase64 }
+    });
   },
 
   async deleteTournament(id) {
-    await db.ref(`tournaments/${id}`).remove();
-    const snap = await db.ref('matches').orderByChild('tournamentId').equalTo(id).once('value');
-    const updates = {};
-    snap.forEach(child => { updates[`matches/${child.key}`] = null; });
-    if (Object.keys(updates).length) await db.ref().update(updates);
+    await ApiClient.request(`/admin/tournaments/${encodeURIComponent(id)}`, { method: 'DELETE' });
   },
 
   // ---- Phases ----
   async getPhases(tournamentId) {
-    const snap = await db.ref(`tournaments/${tournamentId}/phases`).once('value');
-    const data = snap.val() || {};
-    return Object.entries(data).map(([id, v]) => ({ id, ...v }));
+    return ApiClient.request(`/public/tournaments/${encodeURIComponent(tournamentId)}/phases`);
   },
 
   async createPhase(tournamentId, name) {
-    const ref = db.ref(`tournaments/${tournamentId}/phases`).push();
-    await ref.set({ name });
-    return ref.key;
+    const phase = await ApiClient.request(`/admin/tournaments/${encodeURIComponent(tournamentId)}/phases`, {
+      method: 'POST',
+      body: { name }
+    });
+    return phase.id;
   },
 
   async deletePhase(tournamentId, phaseId) {
-    await db.ref(`tournaments/${tournamentId}/phases/${phaseId}`).remove();
+    await ApiClient.request(`/admin/tournaments/${encodeURIComponent(tournamentId)}/phases/${encodeURIComponent(phaseId)}`, { method: 'DELETE' });
   },
 
   // ---- Days ----
   async getDays(tournamentId, phaseId) {
-    const snap = await db.ref(`tournaments/${tournamentId}/phases/${phaseId}/days`).once('value');
-    const data = snap.val() || {};
-    return Object.entries(data).map(([id, v]) => ({ id, ...v }));
+    return ApiClient.request(`/public/tournaments/${encodeURIComponent(tournamentId)}/phases/${encodeURIComponent(phaseId)}/days`);
   },
 
   async createDay(tournamentId, phaseId, name) {
-    const ref = db.ref(`tournaments/${tournamentId}/phases/${phaseId}/days`).push();
-    await ref.set({ name });
-    return ref.key;
+    const day = await ApiClient.request(`/admin/tournaments/${encodeURIComponent(tournamentId)}/phases/${encodeURIComponent(phaseId)}/days`, {
+      method: 'POST',
+      body: { name }
+    });
+    return day.id;
   },
 
   async deleteDay(tournamentId, phaseId, dayId) {
-    await db.ref(`tournaments/${tournamentId}/phases/${phaseId}/days/${dayId}`).remove();
+    await ApiClient.request(`/admin/tournaments/${encodeURIComponent(tournamentId)}/phases/${encodeURIComponent(phaseId)}/days/${encodeURIComponent(dayId)}`, { method: 'DELETE' });
   },
 
   // ---- Matches ----
   async saveMatch(matchData) {
-    const ref = db.ref('matches').push();
-    await ref.set({ ...matchData, createdAt: Date.now() });
-    return ref.key;
+    const match = await ApiClient.request('/admin/matches', { method: 'POST', body: matchData });
+    return match.id;
   },
 
   async getMatches(filters = {}) {
-    const snap = await db.ref('matches').once('value');
-    const data = snap.val() || {};
-    let matches = Object.entries(data).map(([id, v]) => ({ id, ...v }));
-
-    if (filters.tournamentId) matches = matches.filter(m => m.tournamentId === filters.tournamentId);
-    if (filters.phaseId) matches = matches.filter(m => m.phaseId === filters.phaseId);
-    if (filters.dayId) matches = matches.filter(m => m.dayId === filters.dayId);
-
-    return matches;
+    const query = new URLSearchParams(filters).toString();
+    return ApiClient.request(`/public/matches${query ? `?${query}` : ''}`);
   },
 
   async deleteMatch(id) {
-    await db.ref(`matches/${id}`).remove();
+    await ApiClient.request(`/admin/matches/${encodeURIComponent(id)}`, { method: 'DELETE' });
   },
 
   // ---- Aggregation ----
@@ -105,13 +94,13 @@ const DataService = {
           };
         }
         const m = map[key];
-        m.kills += parseInt(t['Kill'] || t.kill || 0);
-        m.totalScore += parseInt(t['Total Score'] || t.totalScore || 0);
-        m.survivalScore += parseInt(t['Survival Score'] || t.survivalScore || 0);
-        m.damage += parseInt(t['Damage'] || t.damage || 0);
-        m.booyah += parseInt(t['BOOYAH!'] || t.booyah || 0);
+        m.kills += safeNumber(t['Kill'] ?? t.kill);
+        m.totalScore += safeNumber(t['Total Score'] ?? t.totalScore);
+        m.survivalScore += safeNumber(t['Survival Score'] ?? t.survivalScore);
+        m.damage += safeNumber(t['Damage'] ?? t.damage);
+        m.booyah += safeNumber(t['BOOYAH!'] ?? t.booyah);
         m.matchesPlayed += 1;
-        const rank = parseInt(t['Match Rank'] || t.matchRank || 99);
+        const rank = safeNumber(t['Match Rank'] ?? t.matchRank, 99);
         if (rank < m.bestRank) m.bestRank = rank;
       }
     }
@@ -130,10 +119,12 @@ const DataService = {
       for (const p of match.players) {
         const name = p['Player Name'] || p.playerName;
         if (!name) continue;
-        if (!map[name]) {
-          map[name] = {
+        const teamName = p['Team Name'] || p.teamName || '';
+        const key = `${teamName}\u0000${name}`;
+        if (!map[key]) {
+          map[key] = {
             playerName: name,
-            teamName: p['Team Name'] || p.teamName || '',
+            teamName,
             kills: 0,
             damage: 0,
             assist: 0,
@@ -142,12 +133,12 @@ const DataService = {
             matchesPlayed: 0
           };
         }
-        const m = map[name];
-        m.kills += parseInt(p['Kill'] || p.kill || 0);
-        m.damage += parseInt(p['Damage'] || p.damage || 0);
-        m.assist += parseInt(p['Assist'] || p.assist || 0);
-        m.knockDown += parseInt(p['Knock Down'] || p.knockDown || 0);
-        m.headshots += parseInt(p['Headshots'] || p.headshots || 0);
+        const m = map[key];
+        m.kills += safeNumber(p['Kill'] ?? p.kill);
+        m.damage += safeNumber(p['Damage'] ?? p.damage);
+        m.assist += safeNumber(p['Assist'] ?? p.assist);
+        m.knockDown += safeNumber(p['Knock Down'] ?? p.knockDown);
+        m.headshots += safeNumber(p['Headshots'] ?? p.headshots);
         m.matchesPlayed += 1;
         if (p['Team Name'] || p.teamName) m.teamName = p['Team Name'] || p.teamName;
       }
@@ -158,3 +149,8 @@ const DataService = {
     });
   }
 };
+
+function safeNumber(value, fallback = 0) {
+  const number = Number(value);
+  return Number.isFinite(number) ? number : fallback;
+}

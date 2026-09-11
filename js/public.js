@@ -15,8 +15,6 @@ document.addEventListener('DOMContentLoaded', () => {
   let selectedTournament = null;
   let currentSort       = { col: null, dir: 'desc' };
 
-  Analytics.track('public');
-
   tabTeams.addEventListener('click',   () => { currentTab = 'teams';   currentSort = { col: null, dir: 'desc' }; updateTabs(); loadData(); });
   tabPlayers.addEventListener('click', () => { currentTab = 'players'; currentSort = { col: null, dir: 'desc' }; updateTabs(); loadData(); });
 
@@ -64,7 +62,7 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     } catch (e) {
       console.error(e);
-      tournamentGrid.innerHTML = '<div class="empty-state"><h3>Error</h3><p>Failed to load tournaments. Check Firebase configuration.</p></div>';
+      tournamentGrid.innerHTML = '<div class="empty-state"><h3>Temporarily unavailable</h3><p>Tournament data could not be loaded. Please try again shortly.</p></div>';
     }
   }
 
