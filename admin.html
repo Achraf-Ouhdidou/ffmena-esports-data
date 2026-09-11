@@ -4,8 +4,11 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Admin | FFMENA Esports</title>
-  <link rel="icon" type="image/svg+xml" href="favicon.svg">
-  <link rel="stylesheet" href="css/styles.css">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="referrer" content="no-referrer">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; connect-src 'self' https://admin.strakhovgg.com; img-src 'self' data:; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; object-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests">
+  <link rel="icon" type="image/svg+xml" href="favicon.svg?v=1.0.0">
+  <link rel="stylesheet" href="css/styles.css?v=1.0.0">
 </head>
 <body>
 
@@ -16,7 +19,7 @@
         <div class="logo">FF<span>MENA</span> <span style="color:var(--text-3);font-size:0.75rem;font-weight:500;margin-left:0.5rem;font-family:Inter,sans-serif;text-transform:none;letter-spacing:0">Admin</span></div>
       </div>
       <nav class="header-nav">
-        <a href="index.html" class="nav-link">Public Site</a>
+        <a href="https://strakhovgg.com/" class="nav-link">Public Site</a>
         <span id="headerUserEmail" style="font-size:0.72rem;color:var(--text-3);padding:0 0.5rem"></span>
         <button class="btn btn-ghost btn-sm" id="logoutBtn" style="display:none">Sign Out</button>
       </nav>
@@ -69,12 +72,6 @@
             <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="1" y="2" width="12" height="10" rx="1.5" stroke="currentColor" stroke-width="1.5"/><path d="M4 6H10M4 8.5H8" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
           </span><span>Match History</span>
         </button>
-        <div class="sidebar-section-label">Insights</div>
-        <button class="sidebar-link" data-section="analytics">
-          <span class="sidebar-icon">
-            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M1 12L4.5 7.5L7.5 9.5L11 4L13 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          </span><span>Analytics</span>
-        </button>
         <div class="sidebar-section-label">Config</div>
         <button class="sidebar-link" data-section="settings">
           <span class="sidebar-icon">
@@ -109,14 +106,6 @@
               <div class="dash-card-label" style="margin-bottom:0.25rem">Unique Players</div>
               <div class="dash-card-value" id="dashPlayers">—</div>
             </div>
-            <div class="dash-card">
-              <div class="dash-card-label" style="margin-bottom:0.25rem">Visitors Today</div>
-              <div class="dash-card-value" id="dashVisitorsToday">—</div>
-            </div>
-            <div class="dash-card">
-              <div class="dash-card-label" style="margin-bottom:0.25rem">Total Visitors</div>
-              <div class="dash-card-value" id="dashVisitorsTotal">—</div>
-            </div>
           </div>
 
           <div class="section-title">Recent Matches</div>
@@ -140,7 +129,7 @@
             </div>
 
             <div class="form-group" id="logoUploadGroup">
-              <label>Logo <span style="color:var(--text-3);font-weight:400;font-size:0.7rem">(PNG/JPG, max 200KB)</span></label>
+              <label>Logo <span style="color:var(--text-3);font-weight:400;font-size:0.7rem">(PNG/JPG, max 500KB)</span></label>
               <div style="display:flex;gap:0.75rem;align-items:center;flex-wrap:wrap">
                 <div class="logo-upload-zone" id="logoUploadZone">
                   <div class="upload-icon" style="color:var(--text-3)">
@@ -281,59 +270,6 @@
           </div>
         </section>
 
-        <!-- ═══ ANALYTICS ═══ -->
-        <section class="admin-panel-section" id="section-analytics">
-          <div class="admin-topbar">
-            <div class="admin-topbar-title">Analytics</div>
-            <button class="btn btn-ghost btn-sm" id="btnRefreshAnalytics">Refresh</button>
-          </div>
-
-          <div class="analytics-grid" style="margin-bottom:1.5rem">
-            <div class="analytics-card">
-              <div class="analytics-card-title">Visitors Today</div>
-              <div class="analytics-card-value" id="anaVisitorsToday">—</div>
-              <div class="analytics-card-sub">Unique sessions</div>
-            </div>
-            <div class="analytics-card">
-              <div class="analytics-card-title">Total Visitors</div>
-              <div class="analytics-card-value" id="anaVisitorsTotal">—</div>
-              <div class="analytics-card-sub">All time</div>
-            </div>
-            <div class="analytics-card">
-              <div class="analytics-card-title">This Week</div>
-              <div class="analytics-card-value" id="anaVisitorsWeek">—</div>
-              <div class="analytics-card-sub">Last 7 days</div>
-            </div>
-            <div class="analytics-card">
-              <div class="analytics-card-title">This Month</div>
-              <div class="analytics-card-value" id="anaVisitorsMonth">—</div>
-              <div class="analytics-card-sub">Last 30 days</div>
-            </div>
-          </div>
-
-          <div style="display:grid;grid-template-columns:2fr 1fr;gap:1.5rem;margin-bottom:1.5rem" class="admin-grid">
-            <div class="card">
-              <div class="card-header"><span class="card-title">Daily Visits (Last 14 Days)</span></div>
-              <div id="dailyVisitsChart" class="visit-bar-wrap"></div>
-            </div>
-            <div class="card">
-              <div class="card-header"><span class="card-title">Device Breakdown</span></div>
-              <div id="deviceBreakdown" class="device-pie" style="flex-direction:column;gap:0.75rem;margin-top:0.5rem"></div>
-            </div>
-          </div>
-
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem" class="admin-grid">
-            <div class="card">
-              <div class="card-header"><span class="card-title">Top Countries</span></div>
-              <div id="topCountries" class="visit-bar-wrap"></div>
-            </div>
-            <div class="card">
-              <div class="card-header"><span class="card-title">Recent Visitors</span></div>
-              <ul id="recentVisits" class="recent-visits-list"></ul>
-            </div>
-          </div>
-        </section>
-
         <!-- ═══ SETTINGS ═══ -->
         <section class="admin-panel-section" id="section-settings">
           <div class="admin-topbar">
@@ -341,44 +277,6 @@
           </div>
 
           <div class="settings-grid">
-            <div class="card">
-              <div class="card-header"><span class="card-title">Site Settings</span></div>
-              <div class="form-group">
-                <label>Site Title</label>
-                <input type="text" id="settingSiteTitle" placeholder="FFMENA Esports">
-              </div>
-              <div class="form-group">
-                <label>Site Description</label>
-                <textarea id="settingSiteDesc" placeholder="Official tournament statistics platform"></textarea>
-              </div>
-              <div class="form-group">
-                <label>Contact Email</label>
-                <input type="text" id="settingContact" placeholder="contact@ffmena.gg">
-              </div>
-              <button class="btn btn-primary" id="btnSaveSettings">Save Settings</button>
-            </div>
-
-            <div class="card">
-              <div class="card-header"><span class="card-title">Feature Toggles</span></div>
-              <div class="settings-row">
-                <span class="settings-row-label">Enable Analytics Tracking</span>
-                <label class="toggle"><input type="checkbox" id="toggleAnalytics" checked><span class="toggle-slider"></span></label>
-              </div>
-              <div class="settings-row">
-                <span class="settings-row-label">Show Player Leaderboard</span>
-                <label class="toggle"><input type="checkbox" id="togglePlayers" checked><span class="toggle-slider"></span></label>
-              </div>
-              <div class="settings-row">
-                <span class="settings-row-label">Show Tournament Logos</span>
-                <label class="toggle"><input type="checkbox" id="toggleLogos" checked><span class="toggle-slider"></span></label>
-              </div>
-              <div class="settings-row">
-                <span class="settings-row-label">Public Access Enabled</span>
-                <label class="toggle"><input type="checkbox" id="togglePublic" checked><span class="toggle-slider"></span></label>
-              </div>
-              <button class="btn btn-primary" style="margin-top:1rem" id="btnSaveToggles">Save Toggles</button>
-            </div>
-
             <div class="card">
               <div class="card-header"><span class="card-title">Data Management</span></div>
               <p style="font-size:0.8rem;color:var(--text-3);margin-bottom:1.25rem">Manage your database. Destructive actions cannot be undone.</p>
@@ -405,14 +303,11 @@
     </div>
   </div>
 
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-storage-compat.js"></script>
-  <script src="js/firebase-config.js"></script>
-  <script src="js/analytics.js"></script>
-  <script src="js/csv-parser.js"></script>
-  <script src="js/data.js"></script>
-  <script src="js/admin.js"></script>
+  <script src="js/runtime-config.js?v=1.0.0"></script>
+  <script src="js/api-client.js?v=1.0.0"></script>
+  <script src="vendor/papaparse.min.js?v=5.7.0"></script>
+  <script src="js/csv-parser.js?v=1.0.0"></script>
+  <script src="js/data.js?v=1.0.0"></script>
+  <script src="js/admin.js?v=1.0.0"></script>
 </body>
 </html>

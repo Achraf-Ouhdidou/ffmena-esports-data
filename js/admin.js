@@ -57,40 +57,79 @@ document.addEventListener('DOMContentLoaded', () => {
   let allMatchesCache = [];
   let allTournamentsList = [];
 
-  // ─── AUTH ───────────────────────────────────────
-  auth.onAuthStateChanged(async user => {
-    if (user) {
-      loginSection.classList.add('hidden');
-      adminPanel.classList.remove('hidden');
-      headerEmail.textContent = user.email;
-      logoutBtn.style.display = '';
-      if (settingUserEmail) settingUserEmail.textContent = user.email;
-      await loadAllTournaments();
-      await loadDashboard();
-      await loadMatchesSection();
-    } else {
-      loginSection.classList.remove('hidden');
-      adminPanel.classList.add('hidden');
-      headerEmail.textContent = '';
-      logoutBtn.style.display = 'none';
-    }
+  document.addEventListener('click', event => {
+    const button = event.target.closest('[data-admin-action]');
+    if (!button) return;
+
+    const actions = {
+      'manage-tournament': () => window.adminManageTournament(button.dataset.id, button.dataset.name),
+      'upload-logo': () => window.adminUploadLogoFor(button.dataset.id),
+      'delete-tournament': () => window.adminDeleteTournament(button.dataset.id, button.dataset.name),
+      'delete-phase': () => window.adminDeletePhase(button.dataset.id, button.dataset.name),
+      'delete-day': () => window.adminDeleteDay(button.dataset.phaseId, button.dataset.id, button.dataset.name),
+      'delete-match': () => window.adminDeleteMatch(button.dataset.id)
+    };
+    const action = actions[button.dataset.adminAction];
+    if (action) action();
   });
+
+  // ─── AUTH ───────────────────────────────────────
+  function showLogin() {
+    loginSection.classList.remove('hidden');
+    adminPanel.classList.add('hidden');
+    headerEmail.textContent = '';
+    logoutBtn.style.display = 'none';
+  }
+
+  async function showAdmin(user) {
+    loginSection.classList.add('hidden');
+    adminPanel.classList.remove('hidden');
+    headerEmail.textContent = user.email;
+    logoutBtn.style.display = '';
+    if (settingUserEmail) settingUserEmail.textContent = user.email;
+    await Promise.all([loadAllTournaments(), loadDashboard(), loadMatchesSection()]);
+  }
+
+  async function initializeSession() {
+    try {
+      const session = await AuthService.getSession();
+      if (session.user) await showAdmin(session.user);
+      else showLogin();
+    } catch (error) {
+      showToast('Unable to connect to the admin server', 'error');
+      showLogin();
+    }
+  }
 
   loginForm.addEventListener('submit', async e => {
     e.preventDefault();
     const email = document.getElementById('loginEmail').value.trim();
     const pass  = document.getElementById('loginPassword').value;
+    const submitButton = loginForm.querySelector('button[type="submit"]');
+    submitButton.disabled = true;
     try {
-      await auth.signInWithEmailAndPassword(email, pass);
+      const session = await AuthService.login(email, pass);
+      await showAdmin(session.user);
       showToast('Signed in', 'success');
     } catch (err) {
-      showToast(err.message, 'error');
+      const retryLater = err.status === 429;
+      showToast(retryLater ? 'Too many attempts. Try again later.' : 'Invalid email or password.', 'error');
+    } finally {
+      submitButton.disabled = false;
     }
   });
 
-  const doLogout = () => auth.signOut();
+  const doLogout = async () => {
+    try {
+      await AuthService.logout();
+    } finally {
+      showLogin();
+    }
+  };
   logoutBtn.addEventListener('click', doLogout);
   if (settingsLogoutBtn) settingsLogoutBtn.addEventListener('click', doLogout);
+
+  initializeSession();
 
   // ─── SIDEBAR NAVIGATION ─────────────────────────
   sidebarLinks.forEach(link => {
@@ -102,7 +141,6 @@ document.addEventListener('DOMContentLoaded', () => {
       if (sec) sec.classList.add('active');
 
       if (link.dataset.section === 'matches') loadMatchesSection();
-      if (link.dataset.section === 'analytics') loadAnalytics();
       if (link.dataset.section === 'dashboard') loadDashboard();
     });
   });
@@ -185,9 +223,9 @@ document.addEventListener('DOMContentLoaded', () => {
           <div style="font-size:0.7rem;color:var(--text-3)">${new Date(t.createdAt||0).toLocaleDateString()}</div>
         </div>
         <div style="display:flex;gap:0.5rem;flex-shrink:0">
-          <button class="btn btn-ghost btn-sm" onclick="adminManageTournament('${t.id}','${escapeAttr(t.name)}')">Manage</button>
-          <button class="btn btn-ghost btn-sm" onclick="adminUploadLogoFor('${t.id}')" title="Update logo">Logo</button>
-          <button class="btn btn-danger btn-sm" onclick="adminDeleteTournament('${t.id}','${escapeAttr(t.name)}')">Delete</button>
+          <button class="btn btn-ghost btn-sm" data-admin-action="manage-tournament" data-id="${t.id}" data-name="${escapeAttr(t.name)}">Manage</button>
+          <button class="btn btn-ghost btn-sm" data-admin-action="upload-logo" data-id="${t.id}" title="Update logo">Logo</button>
+          <button class="btn btn-danger btn-sm" data-admin-action="delete-tournament" data-id="${t.id}" data-name="${escapeAttr(t.name)}">Delete</button>
         </div>
       </div>`).join('');
   }
@@ -323,7 +361,7 @@ document.addEventListener('DOMContentLoaded', () => {
     phaseList.innerHTML = phases.map(p => `
       <div style="display:flex;align-items:center;justify-content:space-between;padding:0.5rem 0;border-bottom:1px solid var(--border);font-size:0.8rem">
         <span>${escapeHtml(p.name)}</span>
-        <button class="btn btn-danger btn-sm" onclick="adminDeletePhase('${p.id}','${escapeAttr(p.name)}')">Delete</button>
+        <button class="btn btn-danger btn-sm" data-admin-action="delete-phase" data-id="${p.id}" data-name="${escapeAttr(p.name)}">Delete</button>
       </div>`).join('');
   }
 
@@ -369,7 +407,7 @@ document.addEventListener('DOMContentLoaded', () => {
     dayList.innerHTML = days.map(d => `
       <div style="display:flex;align-items:center;justify-content:space-between;padding:0.5rem 0;border-bottom:1px solid var(--border);font-size:0.8rem">
         <span>${escapeHtml(d.name)}</span>
-        <button class="btn btn-danger btn-sm" onclick="adminDeleteDay('${phaseSelectForDay.value}','${d.id}','${escapeAttr(d.name)}')">Delete</button>
+        <button class="btn btn-danger btn-sm" data-admin-action="delete-day" data-phase-id="${phaseSelectForDay.value}" data-id="${d.id}" data-name="${escapeAttr(d.name)}">Delete</button>
       </div>`).join('');
   }
 
@@ -416,17 +454,26 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function handleCSV(file, type, labelEl, zone) {
-    if (!file || !file.name.endsWith('.csv')) return showToast('Upload a CSV file', 'error');
+    if (!file || !file.name.toLowerCase().endsWith('.csv')) return showToast('Upload a CSV file', 'error');
+    if (file.size > CSVParser.MAX_FILE_SIZE) return showToast('CSV must be 2MB or smaller', 'error');
     const reader = new FileReader();
     reader.onload = ev => {
-      const parsed = CSVParser.parse(ev.target.result);
-      if (!parsed.length) return showToast('CSV is empty or invalid', 'error');
-      if (type === 'team') teamCSVData = parsed;
-      else                 playerCSVData = parsed;
-      labelEl.textContent = `✓ ${file.name} (${parsed.length} rows)`;
-      zone.classList.add('has-file');
-      showToast(`${type === 'team' ? 'Teams' : 'Players'} CSV loaded: ${parsed.length} rows`, 'success');
+      try {
+        const parsed = CSVParser.parse(ev.target.result, type);
+        if (type === 'team') teamCSVData = parsed;
+        else                 playerCSVData = parsed;
+        labelEl.textContent = `✓ ${file.name} (${parsed.length} rows)`;
+        zone.classList.add('has-file');
+        showToast(`${type === 'team' ? 'Teams' : 'Players'} CSV loaded: ${parsed.length} rows`, 'success');
+      } catch (error) {
+        if (type === 'team') teamCSVData = null;
+        else                 playerCSVData = null;
+        labelEl.textContent = '';
+        zone.classList.remove('has-file');
+        showToast(error.message, 'error');
+      }
     };
+    reader.onerror = () => showToast('Could not read the CSV file', 'error');
     reader.readAsText(file);
   }
 
@@ -464,7 +511,6 @@ document.addEventListener('DOMContentLoaded', () => {
       showToast('Upload failed: ' + e.message, 'error');
     }
     btnUploadMatch.disabled = false;
-    btnUploadMatch.textContent = '⬇ Upload Match';
     btnUploadMatch.textContent = 'Upload Match';
   });
 
@@ -509,7 +555,7 @@ document.addEventListener('DOMContentLoaded', () => {
         <div class="match-actions">
           <span class="badge">${(m.teams||[]).length} teams</span>
           <span class="badge">${(m.players||[]).length} players</span>
-          <button class="btn btn-danger btn-sm" onclick="adminDeleteMatch('${m.id}')">Delete</button>
+          <button class="btn btn-danger btn-sm" data-admin-action="delete-match" data-id="${m.id}">Delete</button>
         </div>
       </li>`).join('') + '</ul>';
   }
@@ -529,11 +575,9 @@ document.addEventListener('DOMContentLoaded', () => {
   // ─── DASHBOARD ───────────────────────────────────
   async function loadDashboard() {
     try {
-      const [tournaments, matches, today, total] = await Promise.all([
+      const [tournaments, matches] = await Promise.all([
         DataService.getTournaments(),
-        DataService.getMatches(),
-        Analytics.getToday(),
-        Analytics.getTotal()
+        DataService.getMatches()
       ]);
 
       const teams   = new Set();
@@ -547,8 +591,6 @@ document.addEventListener('DOMContentLoaded', () => {
       setText('dashMatches',     matches.length);
       setText('dashTeams',       teams.size);
       setText('dashPlayers',     players.size);
-      setText('dashVisitorsToday', today);
-      setText('dashVisitorsTotal', total);
 
       // recent 5 matches
       const recent5 = [...matches].sort((a,b) => (b.createdAt||0) - (a.createdAt||0)).slice(0,5);
@@ -578,120 +620,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (el) el.textContent = val;
   }
 
-  // ─── ANALYTICS ───────────────────────────────────
-  async function loadAnalytics() {
-    try {
-      const [daily, total, today, week, month, visits] = await Promise.all([
-        Analytics.getDailyStats(),
-        Analytics.getTotal(),
-        Analytics.getToday(),
-        Analytics.getWeek(),
-        Analytics.getMonth(),
-        Analytics.getRecentVisits(60)
-      ]);
-
-      setText('anaVisitorsToday', today);
-      setText('anaVisitorsTotal', total);
-      setText('anaVisitorsWeek',  week);
-      setText('anaVisitorsMonth', month);
-
-      // daily bar chart (last 14 days)
-      const chart = document.getElementById('dailyVisitsChart');
-      if (chart) {
-        const days14 = [];
-        for (let i = 13; i >= 0; i--) {
-          const d = new Date(); d.setDate(d.getDate() - i);
-          const key = d.toISOString().split('T')[0];
-          days14.push({ label: d.toLocaleDateString('en',{month:'short',day:'numeric'}), count: daily[key]||0 });
-        }
-        const maxV = Math.max(...days14.map(d => d.count), 1);
-        chart.innerHTML = days14.map(d => `
-          <div class="visit-bar-row">
-            <span class="visit-bar-label">${d.label}</span>
-            <div class="visit-bar-track"><div class="visit-bar-fill" style="width:${Math.round(d.count/maxV*100)}%"></div></div>
-            <span class="visit-bar-count">${d.count}</span>
-          </div>`).join('');
-      }
-
-      // device breakdown
-      const dev = { desktop:0, mobile:0, tablet:0 };
-      visits.forEach(v => { if (dev[v.device] !== undefined) dev[v.device]++; });
-      const total_dev = Object.values(dev).reduce((a,b) => a+b, 0) || 1;
-      const devColors = { desktop:'#f0b429', mobile:'#22c55e', tablet:'#3b82f6' };
-      const devEl = document.getElementById('deviceBreakdown');
-      if (devEl) {
-        devEl.innerHTML = Object.entries(dev).map(([k, v]) => `
-          <div class="device-item">
-            <div class="device-dot" style="background:${devColors[k]}"></div>
-            <span style="color:var(--text-2);text-transform:capitalize;font-size:0.8rem">${k}</span>
-            <span style="margin-left:auto;font-weight:700;font-size:0.8rem;color:var(--text-1)">${v}</span>
-            <span style="color:var(--text-3);font-size:0.72rem">(${Math.round(v/total_dev*100)}%)</span>
-          </div>`).join('');
-      }
-
-      // top countries
-      const countryCounts = {};
-      visits.forEach(v => { if (v.country && v.country !== 'unknown') countryCounts[v.country] = (countryCounts[v.country]||0) + 1; });
-      const topC = Object.entries(countryCounts).sort((a,b) => b[1]-a[1]).slice(0,8);
-      const maxC = topC[0] ? topC[0][1] : 1;
-      const cEl = document.getElementById('topCountries');
-      if (cEl) {
-        cEl.innerHTML = topC.length ? topC.map(([c, n]) => `
-          <div class="visit-bar-row">
-            <span class="visit-bar-label">${c.substring(0,12)}</span>
-            <div class="visit-bar-track"><div class="visit-bar-fill" style="width:${Math.round(n/maxC*100)}%"></div></div>
-            <span class="visit-bar-count">${n}</span>
-          </div>`).join('')
-        : '<div style="color:var(--text-3);font-size:0.78rem">No data yet</div>';
-      }
-
-      // recent visitors
-      const rvEl = document.getElementById('recentVisits');
-      if (rvEl) {
-        rvEl.innerHTML = visits.slice(0,15).map(v => `
-          <li>
-            <span style="color:var(--text-2)">${v.country||'?'} · ${v.device||'?'}</span>
-            <span style="color:var(--text-3);font-size:0.68rem">${v.ts ? new Date(v.ts).toLocaleTimeString() : ''}</span>
-          </li>`).join('') || '<li><span style="color:var(--text-3)">No visits recorded</span></li>';
-      }
-    } catch (e) {
-      console.error('Analytics error', e);
-      showToast('Analytics load failed', 'error');
-    }
-  }
-
-  if (document.getElementById('btnRefreshAnalytics')) {
-    document.getElementById('btnRefreshAnalytics').addEventListener('click', loadAnalytics);
-  }
-
   // ─── SETTINGS ────────────────────────────────────
-  const btnSaveSettings = document.getElementById('btnSaveSettings');
-  if (btnSaveSettings) {
-    btnSaveSettings.addEventListener('click', async () => {
-      const settings = {
-        siteTitle:   document.getElementById('settingSiteTitle').value.trim(),
-        siteDesc:    document.getElementById('settingSiteDesc').value.trim(),
-        contact:     document.getElementById('settingContact').value.trim()
-      };
-      await db.ref('settings/site').set(settings);
-      showToast('Settings saved', 'success');
-    });
-  }
-
-  const btnSaveToggles = document.getElementById('btnSaveToggles');
-  if (btnSaveToggles) {
-    btnSaveToggles.addEventListener('click', async () => {
-      const toggles = {
-        analytics: document.getElementById('toggleAnalytics').checked,
-        players:   document.getElementById('togglePlayers').checked,
-        logos:     document.getElementById('toggleLogos').checked,
-        public:    document.getElementById('togglePublic').checked
-      };
-      await db.ref('settings/toggles').set(toggles);
-      showToast('Toggles saved', 'success');
-    });
-  }
-
   const btnExportMatches = document.getElementById('btnExportMatches');
   if (btnExportMatches) {
     btnExportMatches.addEventListener('click', async () => {
@@ -716,25 +645,6 @@ document.addEventListener('DOMContentLoaded', () => {
     URL.revokeObjectURL(url);
     showToast(`${filename} downloaded`, 'success');
   }
-
-  // Load saved settings
-  async function loadSettings() {
-    try {
-      const snap = await db.ref('settings/site').once('value');
-      const s = snap.val() || {};
-      if (s.siteTitle && document.getElementById('settingSiteTitle')) document.getElementById('settingSiteTitle').value = s.siteTitle;
-      if (s.siteDesc  && document.getElementById('settingSiteDesc'))  document.getElementById('settingSiteDesc').value  = s.siteDesc;
-      if (s.contact   && document.getElementById('settingContact'))   document.getElementById('settingContact').value   = s.contact;
-
-      const tsnap = await db.ref('settings/toggles').once('value');
-      const t = tsnap.val() || {};
-      ['analytics','players','logos','public'].forEach(k => {
-        const el = document.getElementById('toggle' + k.charAt(0).toUpperCase() + k.slice(1));
-        if (el && t[k] !== undefined) el.checked = t[k];
-      });
-    } catch (_) {}
-  }
-  loadSettings();
 
   // ─── TOAST ───────────────────────────────────────
   window.showToast = showToast;

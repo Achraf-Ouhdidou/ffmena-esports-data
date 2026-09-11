@@ -1,0 +1,11 @@
+.git
+.github
+.env
+backups
+data
+node_modules
+npm-debug.log*
+tests
+*.csv
+DEPLOYMENT.md
+README.md
