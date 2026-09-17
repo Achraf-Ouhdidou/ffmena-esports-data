@@ -66,7 +66,8 @@ const DataService = {
 
   async getMatches(filters = {}) {
     const query = new URLSearchParams(filters).toString();
-    return ApiClient.request(`/public/matches${query ? `?${query}` : ''}`);
+    const response = await ApiClient.request(`/public/matches${query ? `?${query}` : ''}`);
+    return Array.isArray(response) ? response : (response?.items ?? []);
   },
 
   async deleteMatch(id) {
