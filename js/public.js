@@ -41,7 +41,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
       tournamentGrid.innerHTML = tournaments.map(t => {
         const logoHTML = t.logo
-          ? `<div class="tournament-card-logo"><img src="${escapeAttr(t.logo)}" alt=""></div>`
+          ? `<div class="tournament-card-logo"><img src="${escapeAttr(t.logo)}" crossorigin="anonymous" alt=""></div>`
           : `<div class="tournament-card-logo">${escapeHtml(t.name.charAt(0))}</div>`;
         return `
           <div class="tournament-card fade-in" data-id="${t.id}">
@@ -72,7 +72,7 @@ document.addEventListener('DOMContentLoaded', () => {
     leaderboardView.classList.remove('hidden');
 
     const logoHTML = tournament.logo
-      ? `<img class="tournament-info-logo" src="${escapeAttr(tournament.logo)}" alt="">`
+      ? `<img class="tournament-info-logo" src="${escapeAttr(tournament.logo)}" crossorigin="anonymous" alt="">`
       : '';
     tournamentInfo.innerHTML = `${logoHTML}<div class="tournament-info-name">${escapeHtml(tournament.name)}</div>`;
 
