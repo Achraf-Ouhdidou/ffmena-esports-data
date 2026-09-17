@@ -1,3 +1,3 @@
 window.FFMENA_CONFIG = Object.freeze({
-  apiBaseUrl: 'https://admin.strakhovgg.com/api/v1'
+  apiBaseUrl: 'https://strakhovggadmin.ffmea.gameid.garena.co.id/api/v1'
 });
