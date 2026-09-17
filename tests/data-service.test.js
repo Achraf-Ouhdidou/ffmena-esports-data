@@ -9,9 +9,14 @@ function loadService() {
   const context = {
     URLSearchParams,
     ApiClient: {
+      url(assetPath) {
+        return `https://api.example.test${assetPath}`;
+      },
       async request(requestPath, options) {
         requests.push({ path: requestPath, options });
-        if (requestPath === '/public/tournaments') return [];
+        if (requestPath === '/public/tournaments') {
+          return [{ id: 'tournament1', name: 'Community Cup', logoUrl: '/api/v1/public/tournaments/tournament1/logo' }];
+        }
         if (requestPath.startsWith('/admin/tournaments') && options?.method === 'POST') return { id: 'new-id' };
         if (requestPath === '/admin/matches' && options?.method === 'POST') return { id: 'match-id' };
         return null;
@@ -27,7 +32,8 @@ function loadService() {
 test('DataService maps public reads and admin writes to the versioned API', async () => {
   const { service, requests } = loadService();
 
-  await service.getTournaments();
+  const tournaments = await service.getTournaments();
+  assert.equal(tournaments[0].logo, 'https://api.example.test/api/v1/public/tournaments/tournament1/logo');
   await service.getMatches({ tournamentId: 'tournament 1', dayId: 'day1' });
   assert.equal(await service.createTournament('Community Cup', null), 'new-id');
   assert.equal(await service.saveMatch({ teams: [], players: [] }), 'match-id');

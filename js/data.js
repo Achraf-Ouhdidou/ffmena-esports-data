@@ -2,7 +2,11 @@
 const DataService = {
   // ---- Tournaments ----
   async getTournaments() {
-    return ApiClient.request('/public/tournaments');
+    const tournaments = await ApiClient.request('/public/tournaments');
+    return tournaments.map(tournament => ({
+      ...tournament,
+      logo: tournament.logoUrl ? ApiClient.url(tournament.logoUrl) : tournament.logo || null
+    }));
   },
 
   async createTournament(name, logoBase64) {

@@ -1,6 +1,11 @@
 const ApiClient = {
   baseUrl: String(window.FFMENA_CONFIG?.apiBaseUrl || '/api/v1').replace(/\/$/, ''),
 
+  url(path) {
+    const apiBase = new URL(this.baseUrl, window.location.href);
+    return new URL(path, apiBase.origin).href;
+  },
+
   async request(path, options = {}) {
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), 15000);
